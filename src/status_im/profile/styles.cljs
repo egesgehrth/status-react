@@ -1,10 +1,13 @@
 (ns status-im.profile.styles
   (:require [status-im.components.styles :refer [color-white
                                                  color-gray
+                                                 color-gray4
                                                  color-gray5
+                                                 color-light-gray
                                                  color-black
                                                  color-blue
                                                  color-light-blue
+                                                 color-light-blue-transparent
                                                  color-blue-transparent
                                                  text1-color
                                                  text1-disabled-color
@@ -13,10 +16,59 @@
                                                  separator-color]]
             [status-im.utils.platform :as p]))
 
+(defn ps-profile [item]
+  (get-in p/platform-specific [:component-styles :profile item]))
+
 (def profile
   {:flex             1
-   :background-color color-white
+   :background-color color-light-gray
    :flex-direction   :column})
+
+(def profile-form
+  {:background-color color-white})
+
+(def profile-info-container
+  {:background-color color-white
+   :margin-top 16})
+
+(def profile-bage
+  (merge (ps-profile :profile-bage)
+         {:align-items :center}))
+
+(def profile-name-container
+  {:margin-top 12})
+
+(def profile-name-text
+  (ps-profile :profile-name-text))
+
+(def profile-status-container
+  {:margin-top 4})
+
+(def profile-status-text
+  (merge (ps-profile :profile-status-text)
+         {:color color-gray4}))
+
+(def profile-actions-container
+  {:padding-top 10})
+
+(def profile-setting-item
+  (merge (ps-profile :profile-setting-item)
+         {:flex-direction :row
+          :align-items    :center}))
+
+(def profile-setting-text-container
+  {:flex 1
+   :padding-right 20})
+
+(def profile-setting-title
+  (merge (ps-profile :profile-setting-title)
+         {:color color-gray4}))
+
+(def profile-setting-text
+  (ps-profile :profile-setting-text))
+
+(def profile-setting-spacing
+  (ps-profile :profile-setting-spacing))
 
 (def back-btn-touchable
   {:position :absolute})
@@ -173,7 +225,7 @@
   {:margin-top 24
    :margin-left 16
    :margin-right 16
-   :background-color "#628fe3"
+   :background-color color-light-blue
    :border-radius 4
    :height 52
    :align-items :center
@@ -185,37 +237,55 @@
           :padding-right 40
           :padding-left 16
           :justify-content :flex-start
-          :background-color "#628fe333"}))
+          :background-color color-light-blue-transparent}))
+
+(def in-contacts-inner
+  {:align-items :center
+   :flex 1})
 
 (def add-to-contacts-text
-  {:color "#fffeff"
-   :font-size 17
-   :line-height 20
-   :letter-spacing -0.2})
+  (if p/ios?
+    {:color color-white
+     :font-size 17
+     :line-height 20
+     :letter-spacing -0.2}
+    {:color color-white
+     :font-size 14
+     :letter-spacing 0.5}))
 
 (def in-contacts-text
   (merge add-to-contacts-text
-         {:color "#628fe3"}))
+         {:color color-light-blue}))
 
 ;;TODO should be moved to components
 ;;TODO ===============================
 (def settings-group-text
-  {:color          color-light-blue
-   :letter-spacing -0.2
-   :font-size      17
-   :line-height    20})
+  (if p/ios?
+    {:color          color-light-blue
+     :letter-spacing -0.2
+     :font-size      17
+     :line-height    20}
+    {:color          color-black
+     :font-size      16
+     :line-height    24}))
 
 
 (def settings-group-text-container
   {:padding-left 16})
 
 (def settings-icon-container
- {:background-color "#628fe333"
-  :border-radius    50
-  :width            40
-  :height           40
-  :align-items      :center
-  :justify-content  :center})
+  (if p/ios?
+    {:background-color color-light-blue-transparent
+     :border-radius    50
+     :width            40
+     :height           40
+     :align-items      :center
+     :justify-content  :center}
+    {:border-radius    50
+     :width            40
+     :height           40
+     :align-items      :center
+     :justify-content  :center}))
 
 
 (def settings-group-item
@@ -225,10 +295,11 @@
     :align-items    :center})
 
 (def settings-separator
-  {:margin-left      16
-   :height           1
-   :background-color color-gray5
-   :opacity          0.5})
+  (if p/ios?
+    {:margin-left      16
+     :height           1
+     :background-color color-gray5
+     :opacity          0.5}))
 
 (def share-qr-separator
   {:margin-top       24

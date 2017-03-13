@@ -150,13 +150,13 @@
 
       [view st/underline-container]]]))
 
-;;TODO it should be moved to components
+;;TODO should be moved to components
 ;;TODO =--------------------------------------
 (defn separator []
   [view cst/contact-item-separator-wrapper
    [view cst/contact-item-separator]])
 
-;;TODO it should be moved to components
+;;TODO should be moved to components
 (defn settings-button [label icon-key on-press]
   [touchable-highlight {:on-press on-press}
    [view st/settings-group-item
@@ -167,9 +167,10 @@
       label]]]])
 ;;TODO =--------------------------------------
 
-(defview my-prifile-toolbar []
-  [toolbar {:actions [(act/opts {:value #(dispatch [:open-edit-profile])
-                                 :text (label :t/edit)})]}])
+(defn my-prifile-toolbar []
+  [toolbar {:actions [(act/opts [{:value #(dispatch [:open-edit-profile])
+                                  :text (label :t/edit)}])]}])
+
 (defn online-text [last-online]
   (let [last-online-date (time/to-date last-online)
         now-date         (time/now)]
@@ -179,16 +180,15 @@
       (label :t/active-unknown))))
 
 (defn profile-bage [{:keys [name last-online] :as contact}]
-  [view {:align-items :center
-         :padding-top 24}
+  [view st/profile-bage
    [my-profile-icon {:account contact
                      :edit?   false}]
-   [view {:margin-top 12}
-    [text {:style {:font-size 17 :line-height 20 :letter-spacing -0.2}}
+   [view st/profile-name-container
+    [text {:style st/profile-name-text}
      name]]
    (when-not (nil? last-online)
-     [view {:margin-top 4}
-      [text {:style {:font-size 14 :line-height 20 :letter-spacing -0.2 :color "#939ba1"}}
+     [view st/profile-status-container
+      [text {:style st/profile-status-text}
        (online-text last-online)]])])
 
 (defn add-to-contacts [pending? chat-id]
@@ -196,17 +196,20 @@
    (if pending?
      [touchable-highlight {:on-press #(dispatch [:add-pending-contact chat-id])}
       [view st/add-to-contacts
-       [text {:style st/add-to-contacts-text}
+       [text {:style st/add-to-contacts-text
+              :font :medium
+              :uppercase? (get-in platform-specific [:uppercase?])}
         (label :t/add-to-contacts)]]]
      [view st/in-contacts
       [icon :ok_blue]
-      [view {:align-items :center
-             :flex 1}
-       [text {:style st/in-contacts-text}
+      [view st/in-contacts-inner
+       [text {:style st/in-contacts-text
+              :font :medium
+              :uppercase? (get-in platform-specific [:uppercase?])}
         (label :t/in-contacts)]]])])
 
 (defn profile-actions [whisper-identity chat-id]
-  [view {:padding-top 10}
+  [view st/profile-actions-container
    [settings-button (label :t/start-conversation)
                     :chats_blue
                     #(message-user whisper-identity)]
@@ -216,22 +219,14 @@
                     #(dispatch [:open-chat-with-the-send-transaction chat-id])]])
 
 (defn profile-setting-item [label value options text-mode]
-  [view {:padding-left 16
-         :padding-right 16
-         :flex-direction :row
-         :align-items :center
-         :height 73}
-   [view {:flex 1
-          :padding-right 20}
-    [text {:style {:font-size 14
-                   :letter-spacing -0.2
-                   :color "#939ba1"}}
+  [view st/profile-setting-item
+   [view st/profile-setting-text-container
+    [text {:style st/profile-setting-title}
      label]
-    [view {:height 10}]
-    [text {:numberOfLines 1
-           :ellipsizeMode text-mode
-           :style {:font-size 17
-                   :letter-spacing -0.2}}
+    [view st/profile-setting-spacing]
+    [text {:style st/profile-setting-text
+           :numberOfLines 1
+           :ellipsizeMode text-mode}
      value]]
    (when options
      [view
@@ -251,10 +246,10 @@
    [profile-setting-item (label :t/status) status]
    [view st/settings-separator]
    [profile-setting-item (label :t/address) address [{:value (show-qr contact :address)
-                                                      :text (label :t/show-qr) :middle}]]
+                                                      :text (label :t/show-qr)}] :middle]
    [view st/settings-separator]
    [profile-setting-item (label :t/public-key) whisper-identity [{:value (show-qr contact :public-key)
-                                                                  :text (label :t/show-qr) :middle}]]
+                                                                  :text (label :t/show-qr)}] :middle]
    [view st/settings-separator]
    [profile-setting-item (label :t/phone-number) phone]])
 
@@ -267,27 +262,26 @@
                                                     :text (label :t/edit)}]]
    [view st/settings-separator]
    [profile-setting-item (label :t/address) address [{:value (show-qr contact :address)
-                                                      :text (label :t/show-qr) :middle}]]
+                                                      :text (label :t/show-qr)}] :middle]
    [view st/settings-separator]
    [profile-setting-item (label :t/public-key) public-key [{:value (show-qr contact :public-key)
-                                                            :text (label :t/show-qr) :middle}]]
+                                                            :text (label :t/show-qr)}] :middle]
    [view st/settings-separator]
    [profile-setting-item (label :t/phone-number) phone [{:value #(dispatch [:phone-number-change-requested])
                                                          :text (label :t/edit)}]]])
 
 (defview my-profile []
   [current-account [:get-current-account]]
-  [view {:background-color "#eef2f5"}
+  [view st/profile
    [status-bar]
-   [toolbar]
-   [view {:background-color "#ffffff"}
+   [my-prifile-toolbar]
+   [view st/profile-form
     [profile-bage current-account]
     [view st/share-qr-separator]
     [settings-button (label :t/share-qr)
                      :q_r_blue
                      (show-qr current-account :public-key)]]
-   [view {:background-color "#ffffff"
-          :margin-top 16}
+   [view st/profile-info-container
     [my-profile-info current-account]]])
 
 (defview profile []
@@ -295,14 +289,13 @@
            whisper-identity]
     :as contact} [:contact]
    chat-id [:get :current-chat-id]]
-  [view {:background-color "#eef2f5"}
+  [view st/profile
    [status-bar]
    [toolbar]
    [scroll-view
-    [view {:background-color "#ffffff"}
+    [view st/profile-form
      [profile-bage contact]
      [add-to-contacts pending? chat-id]
      [profile-actions whisper-identity chat-id]]
-    [view {:background-color "#ffffff"
-           :margin-top 16}
+    [view st/profile-info-container
      [profile-info contact]]]])
