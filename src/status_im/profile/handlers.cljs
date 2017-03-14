@@ -1,5 +1,5 @@
 (ns status-im.profile.handlers
-  (:require [re-frame.core :refer [subscribe dispatch]]
+  (:require [re-frame.core :refer [subscribe dispatch after]]
             [status-im.utils.handlers :refer [register-handler]]
             [status-im.components.react :refer [show-image-picker]]
             [status-im.utils.image-processing :refer [img->base64]]
@@ -50,3 +50,17 @@
     (fn [db [_ chat-id]]
       (dispatch [:navigate-to :chat chat-id])
       (dispatch [:set-chat-command :send]))))
+
+(defn prepare-edit-profile
+  [{:keys [current-account-id] :as db} _]
+  (let [current-account (select-keys (get-in db [:accounts current-account-id])
+                                     [:name :photo-path :status])]
+    (update-in db [:profile-edit] merge current-account)))
+
+(defn open-edit-profile [_ _]
+  (dispatch [:navigate-to :edit-my-profile]))
+
+(register-handler
+  :open-edit-my-profile
+  (-> prepare-edit-profile
+      ((after open-edit-profile))))

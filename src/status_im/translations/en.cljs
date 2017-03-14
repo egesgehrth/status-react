@@ -67,6 +67,7 @@
 
    ;profile
    :profile                               "Profile"
+   :edit-profile                          "Edit profile"
    :report-user                           "REPORT USER"
    :message                               "Message"
    :username                              "Username"

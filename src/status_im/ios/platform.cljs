@@ -178,7 +178,7 @@
    :discover                     {:uppercase-subtitles? true}
    :public-group-icon-container  {:margin-top 2}
    :private-group-icon-container {:margin-top 2}
-   :group-chat-focus-line-color  styles/color-gray5
+   :group-chat-focus-line-color  styles/color-light-blue
    :group-chat-focus-line-height 1
    :public-group-chat-hash-style {:top 6 :left 3}})
 
