@@ -1,5 +1,5 @@
 function wallet(params, context) {
-    var url = 'https://status.im/dapps/wallet';
+    var url = 'https://status.im/dapps/wallet/';
 
     if (context.debug) {
         url = 'http://127.0.0.1:3450';
